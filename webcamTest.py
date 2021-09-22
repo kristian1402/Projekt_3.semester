@@ -1,4 +1,5 @@
 import cv2
+import numpy
 
 # define a video capture object
 vid = cv2.VideoCapture(0)
