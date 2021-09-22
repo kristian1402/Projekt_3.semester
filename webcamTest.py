@@ -23,9 +23,11 @@ while (True):
     # Display the resulting frame
     cv2.imshow('adjusted frame', frame_threshold_flip)
 
+
     contours, hierarchy = cv2.findContours(frame_threshold_flip, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    contours = max(contours, key=lambda x: cv2.contourArea(x))
-    cv2.drawContours(frame_flip, [contours], -1, (255, 255, 0), 2)
+    if(numpy.all(hierarchy) != None):
+        contours = max(contours, key=lambda x: cv2.contourArea(x))
+        cv2.drawContours(frame_flip, [contours], -1, (255, 255, 0), 2)
     cv2.imshow("contours", frame_flip)
 
     # the 'q' button is set as the
