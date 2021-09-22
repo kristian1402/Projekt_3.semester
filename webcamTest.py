@@ -1,6 +1,8 @@
 import cv2
 import numpy
 
+green_1_test = (78, 0, 246), (94, 12, 255)
+green_2_test = (70, 79, 146), (85, 255, 255)
 # define a video capture object
 vid = cv2.VideoCapture(0)
 
@@ -13,7 +15,7 @@ while (True):
     if frame is None:
         break
     frame_HSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    frame_threshold = cv2.inRange(frame_HSV, (70, 1, 1), (80, 255, 255))
+    frame_threshold = cv2.inRange(frame_HSV, (70, 79, 146), (85, 255, 255))
 
     frame_flip = cv2.flip(frame, 1)
     frame_threshold_flip = cv2.flip(frame_threshold, 1)
