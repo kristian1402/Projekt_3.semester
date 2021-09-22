@@ -36,3 +36,4 @@ while (True):
 vid.release()
 # Destroy all the windows
 cv2.destroyAllWindows()
+#OAUOFAUFUOSOFIOFOUASSAUOFANAUONAOFAUOOFNAUOSAUOANOFNAOFUFNAONFA
