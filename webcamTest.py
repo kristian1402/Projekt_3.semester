@@ -14,7 +14,7 @@ while (True):
     if frame is None:
         break
     frame_HSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    frame_threshold = cv2.inRange(frame_HSV, (70, 79, 146), (85, 255, 255))
+    frame_threshold = cv2.inRange(frame_HSV, (35, 58, 81), (93, 164, 255))
 
     frame_flip = cv2.flip(frame, 1)
     frame_threshold_flip = cv2.flip(frame_threshold, 1)
