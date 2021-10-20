@@ -25,7 +25,7 @@ while (True):
     # Display the resulting frame
 
     cv2.circle(frame_flip, (cX, cY), 7, (0, 255, 255), -1)
-    cv2.rectangle(frame_threshold_flip, (0, 80), (1000, 85), (255, 0, 0), 0)
+    #cv2.rectangle(frame_threshold_flip, (0, 80), (1000, 85), (255, 0, 0), 0)
     cv2.imshow('adjusted frame', frame_threshold_flip)
 
     contours, hierarchy = cv2.findContours(frame_threshold_flip, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -36,15 +36,16 @@ while (True):
 
         #Find average position of contours
         M = cv2.moments(contours)
-        cX = int(M["m10"] / M["m00"])
-        cY = int(M["m01"] / M["m00"])
+        if int(M["m10"] / M["m00"]) != int(0 or M["m01"] / M["m00"]):
+            cX = int(M["m10"] / M["m00"])
+            cY = int(M["m01"] / M["m00"])
 
     cv2.imshow("contours", frame_flip)
 
     for contours in contours:
         x, y, _, _ = cv2.boundingRect(contours)
-        if x < 150 and y < 100:
-            print("In range")
+        #if x < 150 and y < 100:
+            #print("In range")
 
 
     # the 'q' button is set as the
