@@ -1,7 +1,6 @@
 import cv2
 import numpy
 
-
 # Easy access to green color values, not actually used
 green_1_test = (78, 0, 246), (94, 12, 255)
 green_2_test = (70, 79, 146), (85, 255, 255)
@@ -97,7 +96,6 @@ while (True):
         if x < 150 and y < 100:
             print("In range")
     """
-
 
     # Press 'q' to quit
     if cv2.waitKey(1) & 0xFF == ord('q'):
