@@ -57,6 +57,8 @@ while (True):
 
         # Avoiding a division by 0 error
         if int(M["m00"]) != 0:
+
+            # Define center position of the largest cluster of pixels
             cX = int(M["m10"] / M["m00"])
             cY = int(M["m01"] / M["m00"])
 
