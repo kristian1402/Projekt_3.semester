@@ -36,7 +36,7 @@ while (True):
 
         #Find average position of contours
         M = cv2.moments(contours)
-        if int(M["m10"] / M["m00"]) != int(0 or M["m01"] / M["m00"]):
+        if int(M["m10"] / M["m00"]) != 0 or int(M["m01"] / M["m00"]) != 0:
             cX = int(M["m10"] / M["m00"])
             cY = int(M["m01"] / M["m00"])
 
