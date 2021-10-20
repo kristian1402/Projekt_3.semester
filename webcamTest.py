@@ -36,12 +36,13 @@ while (True):
     # We want to flip the normal frame and the threshold frame to mimic a webcam - feels more natural
     frame_flip = cv2.flip(frame, 1)
     frame_threshold_flip = cv2.flip(frame_threshold, 1)
+    blur = cv2.GaussianBlur(frame_threshold_flip, (7, 7), cv2.BORDER_DEFAULT)
 
     # Display the resulting frame + the center circle
 
     cv2.circle(frame_flip, (cX, cY), 7, (0, 255, 255), -1)
     #cv2.rectangle(frame_threshold_flip, (0, 80), (1000, 85), (255, 0, 0), 0)
-    cv2.imshow('adjusted frame', frame_threshold_flip)
+    cv2.imshow('adjusted frame', blur)
 
     # Finds the contours around the largest cluster of pixels - should be the green glove
     contours, hierarchy = cv2.findContours(frame_threshold_flip, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
