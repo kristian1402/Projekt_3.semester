@@ -6,7 +6,7 @@ pygame.init()
 vec = pygame.math.Vector2  # 2 for two dimensional
 
 HEIGHT = 450
-WIDTH = 400
+WIDTH = 800
 ACC = 0.5
 FRIC = -0.12
 FPS = 60
@@ -32,12 +32,12 @@ class Player(pygame.sprite.Sprite):
     def move(self):
         self.acc = vec(0, 0.5)
 
-        pressed_keys = pygame.key.get_pressed()
+        #pressed_keys = pygame.key.get_pressed()
 
-        if pressed_keys[K_LEFT]:
-            self.acc.x = -ACC
-        if pressed_keys[K_RIGHT]:
-            self.acc.x = ACC
+        #if pressed_keys[K_LEFT]:
+            #self.acc.x = -ACC
+        #if pressed_keys[K_RIGHT]:
+        self.acc.x = ACC
 
         self.acc.x += self.vel.x * FRIC
         self.vel += self.acc
@@ -67,7 +67,7 @@ class platform(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.surf = pygame.Surface((WIDTH, 20))
-        self.surf.fill((255, 0, 0))
+        self.surf.fill((0, 0, 255))
         self.rect = self.surf.get_rect(center=(WIDTH / 2, HEIGHT - 10))
 
     def move(self):
