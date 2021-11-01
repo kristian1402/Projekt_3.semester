@@ -1,7 +1,9 @@
 import pygame
 import random
+import socket
 
-# Initial Variables
+HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
+PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
 
 # Initial Variables for Screen Size and Window Caption
 screen = pygame.display.set_mode((640,480))
@@ -72,6 +74,8 @@ def game():
     # Keeps track of the height of the jump
     jump_height = 8
 
+    momentum = True
+
     # Gravity
     gravity = 4
 
@@ -119,11 +123,16 @@ def game():
 
         # If a jump is happening, the player rises 4 pixels for 40 frames, then the jump ends
         if jump == 1:
-            player_y -= jump_height
+            if momentum:
+                player_y -= jump_height
             jump_count += 1
             if jump_count > 40:
+                momentum = False
+            if jump_count > 80:
                 jump_count = 0
                 jump = 0
+                momentum = True
+
 
         # Display crate
         crate_rect = screen.blit(crate,(crate_x,360))
@@ -136,15 +145,18 @@ def game():
             crate_x = random.randint(700,800)
             crate_speed = random.randint(3,5)
 
+        """
         # Return to menu on collision with crate
         if player_rect.colliderect(crate_rect):
             return
+        """
 
-
+        # Listen for messages from webcamtest
 
 
         # Update display
         pygame.display.update()
+
 
         # Built-in function that keeps track of specific events unique to pygame
         for event in pygame.event.get():
@@ -165,3 +177,4 @@ def game():
                         print("jump")
                         jump = 1
 menu()
+

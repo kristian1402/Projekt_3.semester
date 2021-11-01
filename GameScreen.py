@@ -2,6 +2,10 @@ import pygame
 from pygame.locals import *
 import sys
 import cv2
+import socket
+
+HOST = '127.0.0.1'  # The server's hostname or IP address
+PORT = 65432        # The port used by the server
 
 pygame.init()
 vec = pygame.math.Vector2  # 2 for two dimensional

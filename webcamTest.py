@@ -1,5 +1,10 @@
 import cv2
 import numpy
+import socket
+
+HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
+PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
+
 
 # Easy access to green color values, not actually used
 green_1_test = (78, 0, 246), (94, 12, 255)
@@ -85,6 +90,10 @@ while (True):
                     print(f"Jump #{jumpNumber}")
                     jumpNumber += 1
                     delay = 5
+
+                    # Send jump action to server
+
+
         else:
             # The delay makes it so the program waits 5 frames before accepting more input
             delay -= 1
@@ -100,7 +109,6 @@ while (True):
         if x < 150 and y < 100:
             print("In range")
     """
-
 
     # Press 'q' to quit
     if cv2.waitKey(1) & 0xFF == ord('q'):
