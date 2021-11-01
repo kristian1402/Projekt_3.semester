@@ -21,6 +21,9 @@ delay = 0
 # Jump counter
 jumpNumber = 0
 
+def nice():
+    print("Jump!")
+
 while (True):
     # Capture the video frame by frame
     ret, frame = vid.read()
@@ -97,6 +100,7 @@ while (True):
         if x < 150 and y < 100:
             print("In range")
     """
+
 
     # Press 'q' to quit
     if cv2.waitKey(1) & 0xFF == ord('q'):

@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 import sys
+import cv2
 
 pygame.init()
 vec = pygame.math.Vector2  # 2 for two dimensional
@@ -14,7 +15,7 @@ FPS = 60
 FramePerSec = pygame.time.Clock()
 
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Game")
+pygame.display.set_caption("Jumpy The Jumping Square (He Jumps*) *A Lot")
 
 
 class Player(pygame.sprite.Sprite):
@@ -73,17 +74,34 @@ class platform(pygame.sprite.Sprite):
     def move(self):
         pass
 
+class hole(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.surf = pygame.Surface((100, 20))
+        self.surf.fill((0, 0, 0))
+        self.rect = self.surf.get_rect(center=(400, HEIGHT-10))
+
+    def move(self):
+        pass
+
+    def update(self):
+        hits = pygame.sprite.spritecollide(P1, holes, False)
+        if hits:
+            print("damn son you hit a hole ooch")
 
 PT1 = platform()
 P1 = Player()
+H = hole()
 
 all_sprites = pygame.sprite.Group()
 all_sprites.add(PT1)
 all_sprites.add(P1)
+all_sprites.add(H)
 
 platforms = pygame.sprite.Group()
+holes = pygame.sprite.Group()
 platforms.add(PT1)
-
+holes.add(H)
 while True:
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -95,6 +113,7 @@ while True:
 
     displaysurface.fill((0, 0, 0))
     P1.update()
+    H.update()
 
     for entity in all_sprites:
         displaysurface.blit(entity.surf, entity.rect)
