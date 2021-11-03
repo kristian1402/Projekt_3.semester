@@ -1,14 +1,23 @@
 import pygame
 import random
 import socket
+import sys
 
+# Initialize everything imported (otherwise things such as the font does not work)
+pygame.init()
+
+# Server set-up
 HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
 PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
 
-# Initial Variables for Screen Size and Window Caption
+# Initial Variables
 screen = pygame.display.set_mode((640,480))
 pygame.display.set_caption("Side Scroller")
 
+font = pygame.font.SysFont("comicsansms", 20)
+bigfont = pygame.font.SysFont("comicsansms", 100)
+
+high_score = 0
 
 # Menu Function
 def menu():
@@ -55,6 +64,9 @@ def game():
     # Keep track of the x-value of the background image
     bg_x = 0
 
+    # Scroll speed
+    scroll_speed = 1
+
     # Load the player image
     ## (Did not work when the image was called boy.png? Maybe \b is a command or something idk)
     player = pygame.image.load("assets\player.png")
@@ -70,14 +82,26 @@ def game():
 
     # Keeps track of the player's jump, and when to return to the ground
     jump_count = 0
+    jump_count_start = -15
 
     # Keeps track of the height of the jump
     jump_height = 8
+
+    # Decreases the time of the jump
+    jump_diff_add = 0.5
 
     momentum = True
 
     # Gravity
     gravity = 4
+
+    # Score
+    global score
+    global high_score
+    score = 0
+
+    # Difficulty increase
+    difficulty_increase = 0
 
     # Load crate image
     crate = pygame.image.load("assets\crate.png")
@@ -87,14 +111,12 @@ def game():
 
     # Keeps track of the crate's x-value and speed
     ## (Note that it starts slightly outside the window)
-    crate_x = 700
-    crate_speed = 3
-
-
-
-
-
-
+    crate_x = 1500
+    crate_speed = 4
+    crate_speed_low = 4
+    crate_speed_high = 6
+    crate_spawn_low = 700
+    crate_spawn_high = 800
 
     # While the game is running...
     while True:
@@ -107,7 +129,7 @@ def game():
         screen.blit(image, (bg_x + 640, 0))
 
         # Move background 1 pixel
-        bg_x -= 1
+        bg_x -= scroll_speed
 
         # Reset the background when the background has moved the length of the screen
         if bg_x <= -640:
@@ -117,21 +139,22 @@ def game():
         ## (The .blit command returns a rectangle around the player, which we use for collisions)
         player_rect = screen.blit(player, (50, player_y))
 
-        # Gravity needs to affect the player if they are in the air
-        if player_y < 325:
-            player_y += gravity
+        # If the player, for some reason, goes under the ground, put them back
+        if player_y > 325:
+            player_y = 325
 
-        # If a jump is happening, the player rises 4 pixels for 40 frames, then the jump ends
+        # If a jump is happening
         if jump == 1:
-            if momentum:
-                player_y -= jump_height
-            jump_count += 1
-            if jump_count > 40:
-                momentum = False
-            if jump_count > 80:
-                jump_count = 0
+            player_y += jump_count
+            jump_count += jump_diff_add
+
+            # If the player, for some reason, goes under the ground, put them back
+            if player_y >= 325:
+                player_y = 325
                 jump = 0
-                momentum = True
+        else:
+            jump_count = jump_count_start
+
 
 
         # Display crate
@@ -142,16 +165,45 @@ def game():
 
         # Regenerate the crate with randomized stats when it disappears
         if crate_x <= -75:
-            crate_x = random.randint(700,800)
-            crate_speed = random.randint(3,5)
 
-        """
+            # Increase difficulty based on current score
+            if (score + 1) % 5 == 0 and score != 0:
+                print("Speed Increase!")
+                difficulty_increase = True
+
+            if difficulty_increase:
+
+            # As the game progresses, the crates move faster and spawn further apart
+                scroll_speed += 1
+                crate_speed_low += 1
+                crate_speed_high += 1
+                crate_spawn_low += 50
+                crate_spawn_high += 150
+                difficulty_increase = False
+
+            score += 1
+            if score > high_score:
+                high_score = score
+            crate_x = random.randint(crate_spawn_low,crate_spawn_high)
+            crate_speed = random.randint(crate_speed_low,crate_speed_high)
+
+        # Write "Speed Up!" on speed up
+        if (score) % 5 == 0 and score != 0:
+            speedtext = font.render("SPEED UP!", 1, (0, 0, 0))
+            screen.blit(speedtext, (270, 150))
+
         # Return to menu on collision with crate
         if player_rect.colliderect(crate_rect):
             return
-        """
 
         # Listen for messages from webcamtest
+
+        # Show score in the corner of the screen
+        scoretext = font.render("Score = " + str(score), 1, (0, 0, 0))
+        screen.blit(scoretext, (5, 10))
+
+        high_scoretext = font.render("High-Score = " + str(high_score), 1, (0, 0, 0))
+        screen.blit(high_scoretext, (5, 40))
 
 
         # Update display
