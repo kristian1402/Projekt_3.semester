@@ -147,6 +147,7 @@ def game():
             if sprite_counter == 7:
                 if jump == 0:
                     sprite_counter = 0
+                    sprite_delay = 0
             else:
                 sprite_counter += 1
             sprite_delay = 0
@@ -232,7 +233,7 @@ def game():
 
         # Update display
         pygame.display.update()
-
+        print(f"{sprite_delay} + {sprite_counter}")
 
         # Built-in function that keeps track of specific events unique to pygame
         for event in pygame.event.get():
