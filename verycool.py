@@ -1,4 +1,5 @@
 import pygame
+import glob
 import random
 import socket
 import sys
@@ -67,12 +68,15 @@ def game():
     # Scroll speed
     scroll_speed = 1
 
-    # Load the player image
-    ## (Did not work when the image was called boy.png? Maybe \b is a command or something idk)
-    player = pygame.image.load("assets\player.png")
+    # Sprite variables
+    sprite_counter = 0
+    sprite_delay = 0
+    sprite_delay_amount = 0
 
-    # Scale the player down to fit the game
-    player = pygame.transform.rotozoom(player,0,0.2)
+    # Load the player running sprites and jumping sprites
+    run_sprites = [pygame.image.load(img) for img in glob.glob("assets\Run\\*.png")]
+    jump_sprites = [pygame.image.load(img) for img in glob.glob("assets\Jump\\*.png")]
+    player = run_sprites[sprite_counter]
 
     # Keep track of the player's y-value
     player_y = 325
@@ -137,6 +141,26 @@ def game():
 
         # Draw the player on top of the background in a fixed spot
         ## (The .blit command returns a rectangle around the player, which we use for collisions)
+
+        # Update the player sprite
+        if sprite_delay == sprite_delay_amount:
+            if sprite_counter == 7:
+                if jump == 0:
+                    sprite_counter = 0
+            else:
+                sprite_counter += 1
+            sprite_delay = 0
+        else:
+            sprite_delay += 1
+
+        # Draw the player, scale the player down, blit it on the screen
+        if jump == 0:
+            player = run_sprites[sprite_counter]
+            sprite_delay_amount = 3
+        if jump == 1:
+            player = jump_sprites[sprite_counter]
+            sprite_delay_amount = 5
+        player = pygame.transform.rotozoom(player, 0, 0.2)
         player_rect = screen.blit(player, (50, player_y))
 
         # If the player, for some reason, goes under the ground, put them back
@@ -228,5 +252,6 @@ def game():
                     if player_y == 325:
                         print("jump")
                         jump = 1
+                        sprite_counter = 0
 menu()
 
