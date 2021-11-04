@@ -1,8 +1,4 @@
-import pygame
-import glob
-import random
-import socket
-import sys
+import pygame, glob, random, socket, sys
 
 # Initialize everything imported (otherwise things such as the font does not work)
 pygame.init()
@@ -16,7 +12,7 @@ screen = pygame.display.set_mode((640,480))
 pygame.display.set_caption("Side Scroller")
 
 font = pygame.font.SysFont("comicsansms", 20)
-bigfont = pygame.font.SysFont("comicsansms", 100)
+bigfont = pygame.font.SysFont("comicsansms", 30)
 
 high_score = 0
 
@@ -94,7 +90,7 @@ def game():
     # Decreases the time of the jump
     jump_diff_add = 0.5
 
-    momentum = True
+    intro_text = True
 
     # Gravity
     gravity = 4
@@ -116,9 +112,9 @@ def game():
     # Keeps track of the crate's x-value and speed
     ## (Note that it starts slightly outside the window)
     crate_x = 1500
-    crate_speed = 4
-    crate_speed_low = 4
-    crate_speed_high = 6
+    crate_speed = 5
+    crate_speed_low = 5
+    crate_speed_high = 7
     crate_spawn_low = 700
     crate_spawn_high = 800
 
@@ -143,11 +139,10 @@ def game():
         ## (The .blit command returns a rectangle around the player, which we use for collisions)
 
         # Update the player sprite
-        if sprite_delay == sprite_delay_amount:
+        if sprite_delay >= sprite_delay_amount:
             if sprite_counter == 7:
                 if jump == 0:
                     sprite_counter = 0
-                    sprite_delay = 0
             else:
                 sprite_counter += 1
             sprite_delay = 0
@@ -163,6 +158,7 @@ def game():
             sprite_delay_amount = 5
         player = pygame.transform.rotozoom(player, 0, 0.2)
         player_rect = screen.blit(player, (50, player_y))
+        pygame.draw.rect(screen, (255,0,0), (player_rect), 1)
 
         # If the player, for some reason, goes under the ground, put them back
         if player_y > 325:
@@ -184,9 +180,14 @@ def game():
 
         # Display crate
         crate_rect = screen.blit(crate,(crate_x,360))
+        pygame.draw.rect(screen, (0, 0, 255), (crate_rect), 1)
 
         # Make the crate move
         crate_x -= crate_speed
+
+        # Remove Introtext
+        if crate_x == 600:
+            intro_text = False
 
         # Regenerate the crate with randomized stats when it disappears
         if crate_x <= -75:
@@ -217,6 +218,10 @@ def game():
             speedtext = font.render("SPEED UP!", 1, (0, 0, 0))
             screen.blit(speedtext, (270, 150))
 
+        if intro_text:
+            introtext = bigfont.render("Press SPACE to jump!", 1, (0, 0, 0))
+            screen.blit(introtext, (175, 150))
+
         # Return to menu on collision with crate
         if player_rect.colliderect(crate_rect):
             return
@@ -233,7 +238,6 @@ def game():
 
         # Update display
         pygame.display.update()
-        print(f"{sprite_delay} + {sprite_counter}")
 
         # Built-in function that keeps track of specific events unique to pygame
         for event in pygame.event.get():
