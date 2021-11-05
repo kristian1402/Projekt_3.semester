@@ -20,8 +20,8 @@ delay = 0
 # Jump counter
 jumpNumber = 0
 
-def jumpCheck():
-    return True
+# Jump Check
+jumpCheck = False
 
 while (True):
     # Capture the video frame by frame
@@ -81,7 +81,9 @@ while (True):
                 if(cList[0] - 120 > cList[4]):
 
                     # Perform jump action, and set the delay
-                    jumpCheck()
+                    with open('jumpfile.txt', 'w') as f:
+                        f.writelines("1")
+                    f.close
                     print(f"Jump #{jumpNumber}")
                     jumpNumber += 1
                     delay = 5

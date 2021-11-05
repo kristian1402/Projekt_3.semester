@@ -3,6 +3,10 @@ import pygame, glob, random, socket, sys
 # Initialize everything imported (otherwise things such as the font does not work)
 pygame.init()
 
+# Start by clearing the txt file
+file = open("jumpfile.txt","w")
+file.close()
+
 # Initial Variables
 screen = pygame.display.set_mode((640,480))
 pygame.display.set_caption("Side Scroller")
@@ -11,10 +15,6 @@ font = pygame.font.SysFont("comicsansms", 20)
 bigfont = pygame.font.SysFont("comicsansms", 30)
 
 high_score = 0
-
-def jumpy():
-    global jump
-    jump = 1
 
 # Menu Function
 def menu():
@@ -238,6 +238,15 @@ def game():
         high_scoretext = font.render("High-Score = " + str(high_score), 1, (0, 0, 0))
         screen.blit(high_scoretext, (5, 40))
 
+        f = open('jumpfile.txt', 'r+')
+        contents = f.read()
+        if contents == '1':
+            if jump == 0:
+                print("Jump Detected!")
+                jump = 1
+        f.truncate(0)
+        f.close()
+
 
         # Update display
         pygame.display.update()
@@ -259,6 +268,6 @@ def game():
                     # Jump only happens when the player is on the ground
                     if player_y == 325:
                         print("jump")
-                        jumpy()
+                        jump = 1
                         sprite_counter = 0
 menu()
