@@ -1,10 +1,4 @@
-import cv2
-import numpy
-import socket
-
-HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
-PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
-
+import cv2, numpy, socket
 
 # Easy access to green color values, not actually used
 green_1_test = (78, 0, 246), (94, 12, 255)
@@ -26,8 +20,8 @@ delay = 0
 # Jump counter
 jumpNumber = 0
 
-def nice():
-    print("Jump!")
+def jumpCheck():
+    return True
 
 while (True):
     # Capture the video frame by frame
@@ -87,6 +81,7 @@ while (True):
                 if(cList[0] - 120 > cList[4]):
 
                     # Perform jump action, and set the delay
+                    jumpCheck()
                     print(f"Jump #{jumpNumber}")
                     jumpNumber += 1
                     delay = 5

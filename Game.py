@@ -3,10 +3,6 @@ import pygame, glob, random, socket, sys
 # Initialize everything imported (otherwise things such as the font does not work)
 pygame.init()
 
-# Server set-up
-HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
-PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
-
 # Initial Variables
 screen = pygame.display.set_mode((640,480))
 pygame.display.set_caption("Side Scroller")
@@ -15,6 +11,10 @@ font = pygame.font.SysFont("comicsansms", 20)
 bigfont = pygame.font.SysFont("comicsansms", 30)
 
 high_score = 0
+
+def jumpy():
+    global jump
+    jump = 1
 
 # Menu Function
 def menu():
@@ -78,7 +78,11 @@ def game():
     player_y = 325
 
     # Keeps track of if the player is currently jumping
+    global jump
     jump = 0
+
+    # Keeps track of incoming jump-commands from middleman
+    middleman = 0
 
     # Keeps track of the player's jump, and when to return to the ground
     jump_count = 0
@@ -226,7 +230,6 @@ def game():
         if player_rect.colliderect(crate_rect):
             return
 
-        # Listen for messages from webcamtest
 
         # Show score in the corner of the screen
         scoretext = font.render("Score = " + str(score), 1, (0, 0, 0))
@@ -256,7 +259,6 @@ def game():
                     # Jump only happens when the player is on the ground
                     if player_y == 325:
                         print("jump")
-                        jump = 1
+                        jumpy()
                         sprite_counter = 0
 menu()
-
