@@ -72,6 +72,7 @@ def game():
 
     # Scroll speed
     scroll_speed = 1
+    current_speed = scroll_speed
 
     # Sprite variables
     sprite_counter = 0
@@ -139,9 +140,11 @@ def game():
     # Load house
     house = pygame.image.load("assets\house.png")
     house = pygame.transform.rotozoom(house, 0, 0.1)
+    house_rect = (0,0,0,0)
+    goal_rect = (0,0,0,0)
 
     # Move house
-    house_bgx = 700
+    house_bgx = 900
 
     # While the game is running...
     while True:
@@ -215,15 +218,16 @@ def game():
             jump_count = jump_count_start
 
         if fall == 1:
+            current_speed = scroll_speed
             fall = 0
             if fall_count == 0:
                 fall_count = 60
 
         if fall_count == 0:
-            scroll_speed = 1
+            scroll_speed = current_speed
 
         if fall_count > 0:
-            scroll_speed = 0.25
+            scroll_speed = scroll_speed / 1.1
             fall_count -= 1
 
         # Display crate
@@ -239,7 +243,7 @@ def game():
 
         # Regenerate the crate with randomized stats when it disappears
         if crate_x <= -75:
-            if crate_counter < 4:
+            if crate_counter < 19:
                 # Increase difficulty based on current score
                 if (crate_counter + 1) % 5 == 0 and crate_counter != 0:
                     print("Speed Increase!")
@@ -248,7 +252,7 @@ def game():
                 if difficulty_increase:
 
                 # As the game progresses, the crates move faster and spawn further apart
-                    scroll_speed += 1
+                    current_speed += 1
                     crate_speed_low += 1
                     crate_speed_high += 1
                     crate_spawn_low += 50
@@ -262,7 +266,8 @@ def game():
                 crate_speed = random.randint(crate_speed_low, crate_speed_high)
 
             else:
-                screen.blit(house, (house_bgx, 240))
+                house_rect = screen.blit(house, (house_bgx, 240))
+                goal_rect = house_rect.inflate(-220,0)
                 house_bgx -= 4
 
 
@@ -292,7 +297,8 @@ def game():
 
         # Fall on collision with crate
         if player_hitbox.colliderect(crate_rect):
-            fall = 1
+            if fall_count == 0:
+                fall = 1
 
 
         f = open('jumpfile.txt', 'r+')
@@ -304,10 +310,12 @@ def game():
         f.truncate(0)
         f.close()
 
+        if player_rect.colliderect(goal_rect):
+            return
+
         # Keep track of time
         passed_time = pygame.time.get_ticks() - start_time
         clock.tick(60)
-
 
         # Update display
         pygame.display.update()
