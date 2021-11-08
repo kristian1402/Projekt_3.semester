@@ -3,7 +3,7 @@ import pygame, glob, random, socket, sys
 # Initialize everything imported (otherwise things such as the font does not work)
 pygame.init()
 
-# Start by clearing the txt file
+# Start by clearing the txt file (just in case)
 file = open("jumpfile.txt","w")
 file.close()
 
@@ -153,16 +153,19 @@ def game():
         else:
             sprite_delay += 1
 
-        # Draw the player, scale the player down, blit it on the screen
+        # Change sprite based on if the player is jumping or not
         if jump == 0:
             player = run_sprites[sprite_counter]
             sprite_delay_amount = 3
         if jump == 1:
             player = jump_sprites[sprite_counter]
             sprite_delay_amount = 5
+
+        # Draw the player, scale the player down, blit it on the screen
         player = pygame.transform.rotozoom(player, 0, 0.2)
         player_rect = screen.blit(player, (50, player_y))
-        pygame.draw.rect(screen, (255,0,0), (player_rect), 1)
+        player_hitbox = player_rect.inflate(-35,-10)
+        pygame.draw.rect(screen, (255,0,0), (player_hitbox), 1)
 
         # If the player, for some reason, goes under the ground, put them back
         if player_y > 325:
@@ -222,19 +225,28 @@ def game():
             speedtext = font.render("SPEED UP!", 1, (0, 0, 0))
             screen.blit(speedtext, (270, 150))
 
+        # Show tutorial text on start-up
         if intro_text:
             introtext = bigfont.render("Press SPACE to jump!", 1, (0, 0, 0))
             screen.blit(introtext, (175, 150))
 
+        # Primitive Auto-Jump
+        """
+        auto_rect = crate_rect.inflate(150,0)
+        pygame.draw.rect(screen, (0, 255,0), (auto_rect), 1)
+
+        if player_rect.colliderect(auto_rect):
+            jump = 1
+        """
+
         # Return to menu on collision with crate
-        if player_rect.colliderect(crate_rect):
+        if player_hitbox.colliderect(crate_rect):
             return
 
 
-        # Show score in the corner of the screen
+        # Show score/high-score in the corner of the screen
         scoretext = font.render("Score = " + str(score), 1, (0, 0, 0))
         screen.blit(scoretext, (5, 10))
-
         high_scoretext = font.render("High-Score = " + str(high_score), 1, (0, 0, 0))
         screen.blit(high_scoretext, (5, 40))
 
