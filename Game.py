@@ -1,5 +1,6 @@
 import pygame, glob, random, socket, sys
 
+# Starting variables
 # Initialize everything imported (otherwise things such as the font does not work)
 pygame.init()
 
@@ -63,6 +64,7 @@ def game():
     global clock
     start_time = pygame.time.get_ticks()
 
+    # Background / Scrolling Variables
     # Load the menu image and stretch it to the window size
     image = pygame.image.load("assets\level1.png")
     image = pygame.transform.scale(image, (640, 480))
@@ -74,7 +76,7 @@ def game():
     scroll_speed = 1
     current_speed = scroll_speed
 
-    # Sprite variables
+    # Sprite Variables
     sprite_counter = 0
     sprite_delay = 0
     sprite_delay_amount = 0
@@ -85,7 +87,7 @@ def game():
     fall_sprites = [pygame.image.load(img) for img in glob.glob("assets\Fall\\*.png")]
     player = run_sprites[sprite_counter]
 
-    # Keep track of the player's y-value
+    # Jump / Fall Variables
     player_y = 325
 
     # Keeps track of if the player is currently jumping
@@ -106,16 +108,10 @@ def game():
     fall = 0
     fall_count = 0
 
-    intro_text = True
-
     # Gravity
     gravity = 4
 
-    # Score
-    global score
-    global high_score
-    score = 0
-
+    # Crate / Difficulty Variables
     # Difficulty increase
     difficulty_increase = 0
 
@@ -137,6 +133,7 @@ def game():
     # Keeps track of the amount of crates - after 20, end the game
     crate_counter = 0
 
+    # House Variables
     # Load house
     house = pygame.image.load("assets\house.png")
     house = pygame.transform.rotozoom(house, 0, 0.1)
@@ -146,9 +143,13 @@ def game():
     # Move house
     house_bgx = 900
 
+    # Other Variables
+    intro_text = True
+
     # While the game is running...
     while True:
 
+        # Image loading / Backgrond Movement
         # Draw 3 instances of the background image (allows scrolling)
         ## One to the left of the screen, one to the right, and one in the middle
         ### 640 is the length of the game screen
@@ -162,9 +163,6 @@ def game():
         # Reset the background when the background has moved the length of the screen
         if bg_x <= -640:
             bg_x = 0
-
-        # Draw the player on top of the background in a fixed spot
-        ## (The .blit command returns a rectangle around the player, which we use for collisions)
 
         # Update the player sprite
         if sprite_delay >= sprite_delay_amount:
@@ -216,76 +214,26 @@ def game():
                     jump = 0
         else:
             jump_count = jump_count_start
+        # If the player is currently falling
 
-        if fall == 1:
-            current_speed = scroll_speed
-            fall = 0
-            if fall_count == 0:
-                fall_count = 60
-
-        if fall_count == 0:
-            scroll_speed = current_speed
-
-        if fall_count > 0:
-            scroll_speed = scroll_speed / 1.1
-            fall_count -= 1
-
-        # Display crate
-        crate_rect = screen.blit(crate,(crate_x,360))
-        #pygame.draw.rect(screen, (0, 0, 255), (crate_rect), 1)
-
-        # Make the crate move
-        crate_x -= crate_speed
+        # Display crate and make it move
 
         # Remove Introtext
-        if crate_x == 600:
-            intro_text = False
-
-        # Regenerate the crate with randomized stats when it disappears
-        if crate_x <= -75:
-            if crate_counter < 19:
-                # Increase difficulty based on current score
-                if (crate_counter + 1) % 5 == 0 and crate_counter != 0:
-                    print("Speed Increase!")
-                    difficulty_increase = True
-
-                if difficulty_increase:
-
-                # As the game progresses, the crates move faster and spawn further apart
-                    current_speed += 1
-                    crate_speed_low += 1
-                    crate_speed_high += 1
-                    crate_spawn_low += 50
-                    crate_spawn_high += 150
-                    difficulty_increase = False
-
-                crate_counter += 1
-                crate_x = random.randint(crate_spawn_low, crate_spawn_high)
-                if fall_count > 0:
-                    crate_x += 500
-                crate_speed = random.randint(crate_speed_low, crate_speed_high)
-
-            else:
-                house_rect = screen.blit(house, (house_bgx, 240))
-                goal_rect = house_rect.inflate(-220,0)
-                house_bgx -= 4
 
 
+        # Regenerate the crate / Difficulty increase / Spawn house
 
         # Write "Speed Up!" on speed up
         if (crate_counter) % 5 == 0 and crate_counter != 0:
             speedtext = font.render("SPEED UP!", 1, (0, 0, 0))
             screen.blit(speedtext, (270, 150))
-
         # Show tutorial text on start-up
         if intro_text:
             introtext = bigfont.render("Press SPACE to jump!", 1, (0, 0, 0))
             screen.blit(introtext, (175, 150))
-
         # Draw timer text in the corner at all times
         timertext = font.render("Time: " + str(passed_time / 1000), 1, (0, 0, 0))
         screen.blit(timertext, (20, 20))
-
         # Primitive Auto-Jump
         """
         auto_rect = crate_rect.inflate(150,0)
@@ -294,22 +242,14 @@ def game():
         if player_rect.colliderect(auto_rect):
             jump = 1
         """
-
         # Fall on collision with crate
         if player_hitbox.colliderect(crate_rect):
             if fall_count == 0:
                 fall = 1
 
+        # Communication w/ webcamTest
 
-        f = open('jumpfile.txt', 'r+')
-        contents = f.read()
-        if contents == '1':
-            if jump == 0:
-                print("Jump Detected!")
-                jump = 1
-        f.truncate(0)
-        f.close()
-
+        # If player collides with house, win!
         if player_rect.colliderect(goal_rect):
             return
 
@@ -321,6 +261,7 @@ def game():
         pygame.display.update()
 
         # Built-in function that keeps track of specific events unique to pygame
+        ## (Button presses and that kinda thing)
         for event in pygame.event.get():
 
             # Window close event
