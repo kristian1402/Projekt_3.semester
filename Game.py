@@ -7,12 +7,16 @@ pygame.init()
 file = open("jumpfile.txt","w")
 file.close()
 
+# Varibles to keep track of the time
+clock = pygame.time.Clock()
+passed_time = 0
+
 # Initial Variables
 screen = pygame.display.set_mode((640,480))
 pygame.display.set_caption("Side Scroller")
 
-font = pygame.font.SysFont("comicsansms", 20)
-bigfont = pygame.font.SysFont("comicsansms", 30)
+font = pygame.font.SysFont("impact", 20)
+bigfont = pygame.font.SysFont("impact", 30)
 
 high_score = 0
 
@@ -54,6 +58,11 @@ def menu():
 # Game-screen function
 ## (Lots of necessary code is repeated from menu)
 def game():
+    # Start timer
+    global passed_time
+    global clock
+    start_time = pygame.time.get_ticks()
+
     # Load the menu image and stretch it to the window size
     image = pygame.image.load("assets\level1.png")
     image = pygame.transform.scale(image, (640, 480))
@@ -72,6 +81,7 @@ def game():
     # Load the player running sprites and jumping sprites
     run_sprites = [pygame.image.load(img) for img in glob.glob("assets\Run\\*.png")]
     jump_sprites = [pygame.image.load(img) for img in glob.glob("assets\Jump\\*.png")]
+    fall_sprites = [pygame.image.load(img) for img in glob.glob("assets\Fall\\*.png")]
     player = run_sprites[sprite_counter]
 
     # Keep track of the player's y-value
@@ -80,9 +90,6 @@ def game():
     # Keeps track of if the player is currently jumping
     global jump
     jump = 0
-
-    # Keeps track of incoming jump-commands from middleman
-    middleman = 0
 
     # Keeps track of the player's jump, and when to return to the ground
     jump_count = 0
@@ -93,6 +100,10 @@ def game():
 
     # Decreases the time of the jump
     jump_diff_add = 0.5
+
+    # Keeps track of if the player is currently falling
+    fall = 0
+    fall_count = 0
 
     intro_text = True
 
@@ -122,6 +133,16 @@ def game():
     crate_spawn_low = 700
     crate_spawn_high = 800
 
+    # Keeps track of the amount of crates - after 20, end the game
+    crate_counter = 0
+
+    # Load house
+    house = pygame.image.load("assets\house.png")
+    house = pygame.transform.rotozoom(house, 0, 0.1)
+
+    # Move house
+    house_bgx = 700
+
     # While the game is running...
     while True:
 
@@ -145,7 +166,7 @@ def game():
         # Update the player sprite
         if sprite_delay >= sprite_delay_amount:
             if sprite_counter == 7:
-                if jump == 0:
+                if jump != 1 and fall_count == 0:
                     sprite_counter = 0
             else:
                 sprite_counter += 1
@@ -153,19 +174,29 @@ def game():
         else:
             sprite_delay += 1
 
-        # Change sprite based on if the player is jumping or not
-        if jump == 0:
+        # Change sprite based on if the player is jumping / falling or not
+        if jump == 0 and fall_count == 0:
             player = run_sprites[sprite_counter]
             sprite_delay_amount = 3
         if jump == 1:
             player = jump_sprites[sprite_counter]
             sprite_delay_amount = 5
+        if fall_count > 0:
+            player = fall_sprites[sprite_counter]
+            sprite_delay_amount = 5
+
 
         # Draw the player, scale the player down, blit it on the screen
         player = pygame.transform.rotozoom(player, 0, 0.2)
         player_rect = screen.blit(player, (50, player_y))
-        player_hitbox = player_rect.inflate(-35,-10)
-        pygame.draw.rect(screen, (255,0,0), (player_hitbox), 1)
+        player_hitbox = player_rect.inflate(-50, -10)
+        player_hitbox = player_hitbox.move(3, 0)
+
+        # Adjust hitbox if in the middle of jump
+        if jump == 1:
+            if fall == 0:
+                player_hitbox = player_hitbox.move(-13,0)
+        #pygame.draw.rect(screen, (255,0,0), (player_hitbox), 1)
 
         # If the player, for some reason, goes under the ground, put them back
         if player_y > 325:
@@ -173,21 +204,31 @@ def game():
 
         # If a jump is happening
         if jump == 1:
-            player_y += jump_count
-            jump_count += jump_diff_add
+                player_y += jump_count
+                jump_count += jump_diff_add
 
-            # If the player, for some reason, goes under the ground, put them back
-            if player_y >= 325:
-                player_y = 325
-                jump = 0
+                # If the player, for some reason, goes under the ground, put them back
+                if player_y >= 325:
+                    player_y = 325
+                    jump = 0
         else:
             jump_count = jump_count_start
 
+        if fall == 1:
+            fall = 0
+            if fall_count == 0:
+                fall_count = 60
 
+        if fall_count == 0:
+            scroll_speed = 1
+
+        if fall_count > 0:
+            scroll_speed = 0.25
+            fall_count -= 1
 
         # Display crate
         crate_rect = screen.blit(crate,(crate_x,360))
-        pygame.draw.rect(screen, (0, 0, 255), (crate_rect), 1)
+        #pygame.draw.rect(screen, (0, 0, 255), (crate_rect), 1)
 
         # Make the crate move
         crate_x -= crate_speed
@@ -198,30 +239,36 @@ def game():
 
         # Regenerate the crate with randomized stats when it disappears
         if crate_x <= -75:
+            if crate_counter < 4:
+                # Increase difficulty based on current score
+                if (crate_counter + 1) % 5 == 0 and crate_counter != 0:
+                    print("Speed Increase!")
+                    difficulty_increase = True
 
-            # Increase difficulty based on current score
-            if (score + 1) % 5 == 0 and score != 0:
-                print("Speed Increase!")
-                difficulty_increase = True
+                if difficulty_increase:
 
-            if difficulty_increase:
+                # As the game progresses, the crates move faster and spawn further apart
+                    scroll_speed += 1
+                    crate_speed_low += 1
+                    crate_speed_high += 1
+                    crate_spawn_low += 50
+                    crate_spawn_high += 150
+                    difficulty_increase = False
 
-            # As the game progresses, the crates move faster and spawn further apart
-                scroll_speed += 1
-                crate_speed_low += 1
-                crate_speed_high += 1
-                crate_spawn_low += 50
-                crate_spawn_high += 150
-                difficulty_increase = False
+                crate_counter += 1
+                crate_x = random.randint(crate_spawn_low, crate_spawn_high)
+                if fall_count > 0:
+                    crate_x += 500
+                crate_speed = random.randint(crate_speed_low, crate_speed_high)
 
-            score += 1
-            if score > high_score:
-                high_score = score
-            crate_x = random.randint(crate_spawn_low,crate_spawn_high)
-            crate_speed = random.randint(crate_speed_low,crate_speed_high)
+            else:
+                screen.blit(house, (house_bgx, 240))
+                house_bgx -= 4
+
+
 
         # Write "Speed Up!" on speed up
-        if (score) % 5 == 0 and score != 0:
+        if (crate_counter) % 5 == 0 and crate_counter != 0:
             speedtext = font.render("SPEED UP!", 1, (0, 0, 0))
             screen.blit(speedtext, (270, 150))
 
@@ -229,6 +276,10 @@ def game():
         if intro_text:
             introtext = bigfont.render("Press SPACE to jump!", 1, (0, 0, 0))
             screen.blit(introtext, (175, 150))
+
+        # Draw timer text in the corner at all times
+        timertext = font.render("Time: " + str(passed_time / 1000), 1, (0, 0, 0))
+        screen.blit(timertext, (20, 20))
 
         # Primitive Auto-Jump
         """
@@ -239,16 +290,10 @@ def game():
             jump = 1
         """
 
-        # Return to menu on collision with crate
+        # Fall on collision with crate
         if player_hitbox.colliderect(crate_rect):
-            return
+            fall = 1
 
-
-        # Show score/high-score in the corner of the screen
-        scoretext = font.render("Score = " + str(score), 1, (0, 0, 0))
-        screen.blit(scoretext, (5, 10))
-        high_scoretext = font.render("High-Score = " + str(high_score), 1, (0, 0, 0))
-        screen.blit(high_scoretext, (5, 40))
 
         f = open('jumpfile.txt', 'r+')
         contents = f.read()
@@ -258,6 +303,10 @@ def game():
                 jump = 1
         f.truncate(0)
         f.close()
+
+        # Keep track of time
+        passed_time = pygame.time.get_ticks() - start_time
+        clock.tick(60)
 
 
         # Update display
@@ -277,9 +326,9 @@ def game():
                 # Jump when SPACE is pressed
                 if event.key == pygame.K_SPACE:
 
-                    # Jump only happens when the player is on the ground
+                    # Jump only happens when the player is on the ground and not stumbling
                     if player_y == 325:
-                        print("jump")
-                        jump = 1
-                        sprite_counter = 0
+                        if fall_count == 0:
+                            jump = 1
+                            sprite_counter = 0
 menu()
