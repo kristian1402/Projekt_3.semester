@@ -50,11 +50,12 @@ def menu():
                     # Run the game
                     game()
 
-def rating_func():
+def rating_func(): #THIS ALL NEED CALIBRATION
+    global rating
     # Jump rating based on marker
-    if crate_x - 120 < player_x > crate_x - 80:
+    if crate_x - 95 < player_x < crate_x - 60:
         rating = "Perfect!"
-    elif crate_x - 160 < player_x > crate_x - 120:
+    elif crate_x - 135 < player_x < crate_x - 95:
         rating = "Nice!"
     else:
         rating = ""
@@ -111,7 +112,7 @@ def game():
 
     # Keeps track of the player's jump, and when to return to the ground
     jump_count = 0
-    jump_count_start = -15
+    jump_count_start = -12
 
     # Keeps track of the height of the jump
     jump_height = 8
@@ -120,6 +121,7 @@ def game():
     jump_diff_add = 0.5
 
     # Jump rating
+    global rating
     rating = ""
 
     # Keeps track of if the player is currently falling
@@ -152,8 +154,8 @@ def game():
     crate_speed = 5
     crate_speed_low = 5
     crate_speed_high = 7
-    crate_spawn_low = 700
-    crate_spawn_high = 800
+    crate_spawn_low = 1000
+    crate_spawn_high = 1100
 
     # Keeps track of the amount of crates - after 20, end the game
     crate_counter = 0
@@ -176,6 +178,11 @@ def game():
         else:
             jump_block = False
 
+        # Check for the last auto-jump animation bug
+        if crate_counter == 19 and jump != 1:
+            sprite_counter = 0
+
+
         # Draw 3 instances of the background image (allows scrolling)
         ## One to the left of the screen, one to the right, and one in the middle
         ### 640 is the length of the game screen
@@ -185,6 +192,7 @@ def game():
 
         # Move background 1 pixel
         bg_x -= scroll_speed
+
 
         # Reset the background when the background has moved the length of the screen
         if bg_x <= -640:
@@ -238,6 +246,9 @@ def game():
                 player_y += jump_count
                 jump_count += jump_diff_add
 
+                # Print the rating
+                jumptext = font.render(str(rating), 1, (0, 0, 0))
+                screen.blit(jumptext, (120, 150))
 
                 # If the player, for some reason, goes under the ground, put them back
                 if player_y >= 325:
@@ -263,9 +274,9 @@ def game():
         crate_rect = screen.blit(crate,(crate_x,360))
 
         # Draw the markers before each crate
-        red_mark = (crate_x - 160, 417, 160, 10)
+        red_mark = (crate_x - 200, 417, 200, 10)
         yellow_mark = (crate_x - 130, 417, 40, 10)
-        green_mark = (crate_x - 90, 417, 40, 10)
+        green_mark = (crate_x - 90, 417, 35, 10)
         pygame.draw.rect(screen, (255, 0, 0), (red_mark), 0)
         pygame.draw.rect(screen, (255, 255, 0), (yellow_mark), 0)
         pygame.draw.rect(screen, (0, 255, 0), (green_mark), 0)
@@ -337,7 +348,7 @@ def game():
 
         f = open('jumpfile.txt', 'r+')
         contents = f.read()
-        if jump_block == False:
+        if jump_block == False and player_x > crate_x - 200:
             if contents == '1':
                 if jump == 0:
                     jump_count_start = -15
@@ -379,7 +390,7 @@ def game():
 
                 # Jump when SPACE is pressed
                 if event.key == pygame.K_SPACE:
-                    if jump_block == False:
+                    if jump_block == False and player_x > crate_x - 200:
                     # Jump only happens when the player is on the ground and not stumbling
                         if player_y == 325:
                             if fall_count == 0:

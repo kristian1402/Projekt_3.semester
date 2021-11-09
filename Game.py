@@ -50,7 +50,15 @@ def menu():
                     # Run the game
                     game()
 
-
+def rating_func(): #THIS ALL NEED CALIBRATION
+    global rating
+    # Jump rating based on marker
+    if crate_x - 95 < player_x < crate_x - 60:
+        rating = "Perfect!"
+    elif crate_x - 135 < player_x < crate_x - 95:
+        rating = "Nice!"
+    else:
+        rating = ""
 # Game-screen function
 ## (Lots of necessary code is repeated from menu)
 def game():
@@ -87,6 +95,7 @@ def game():
     player = run_sprites[sprite_counter]
 
     # Keep track of the player's x and y-value
+    global player_x
     player_x = 107
     player_y = 325
 
@@ -96,7 +105,7 @@ def game():
 
     # Keeps track of the player's jump, and when to return to the ground
     jump_count = 0
-    jump_count_start = -15
+    jump_count_start = -12
 
     # Keeps track of the height of the jump
     jump_height = 8
@@ -105,6 +114,7 @@ def game():
     jump_diff_add = 0.5
 
     # Jump rating
+    global rating
     rating = ""
 
     # Keeps track of if the player is currently falling
@@ -132,12 +142,13 @@ def game():
 
     # Keeps track of the crate's x-value and speed
     ## (Note that it starts slightly outside the window)
+    global crate_x
     crate_x = 1500
     crate_speed = 5
     crate_speed_low = 5
     crate_speed_high = 7
-    crate_spawn_low = 700
-    crate_spawn_high = 800
+    crate_spawn_low = 1000
+    crate_spawn_high = 1100
 
     # Keeps track of the amount of crates - after 20, end the game
     crate_counter = 0
@@ -216,7 +227,7 @@ def game():
                 player_y += jump_count
                 jump_count += jump_diff_add
 
-                #Print the rating
+                # Print the rating
                 jumptext = font.render(str(rating), 1, (0, 0, 0))
                 screen.blit(jumptext, (120, 150))
 
@@ -244,9 +255,9 @@ def game():
         crate_rect = screen.blit(crate,(crate_x,360))
 
         # Draw the markers before each crate
-        red_mark = (crate_x - 160, 417, 160, 10)
+        red_mark = (crate_x - 200, 417, 200, 10)
         yellow_mark = (crate_x - 130, 417, 40, 10)
-        green_mark = (crate_x - 90, 417, 40, 10)
+        green_mark = (crate_x - 90, 417, 35, 10)
         pygame.draw.rect(screen, (255, 0, 0), (red_mark), 0)
         pygame.draw.rect(screen, (255, 255, 0), (yellow_mark), 0)
         pygame.draw.rect(screen, (0, 255, 0), (green_mark), 0)
@@ -304,15 +315,6 @@ def game():
         timertext = font.render("Time: " + str(passed_time / 1000), 1, (0, 0, 0))
         screen.blit(timertext, (20, 20))
 
-        # Primitive Auto-Jump
-        """
-        auto_rect = crate_rect.inflate(150,0)
-        pygame.draw.rect(screen, (0, 255,0), (auto_rect), 1)
-
-        if player_rect.colliderect(auto_rect):
-            jump = 1
-        """
-
         # Fall on collision with crate
         if player_hitbox.colliderect(crate_rect):
             if fall_count == 0:
@@ -321,18 +323,22 @@ def game():
 
         f = open('jumpfile.txt', 'r+')
         contents = f.read()
-        if contents == '1':
-            if jump == 0:
-                jump_count_start = -15
-                jump = 1
-        if contents == '2':
-            if jump == 0:
-                jump_count_start = -12
-                jump = 1
-        if contents == '3':
-            if jump == 0:
-                jump_count_start = -10
-                jump = 1
+        if player_x > crate_x - 200:
+            if contents == '1':
+                if jump == 0:
+                    jump_count_start = -15
+                    jump = 1
+                    rating_func()
+            if contents == '2':
+                if jump == 0:
+                    jump_count_start = -12
+                    jump = 1
+                    rating_func()
+            if contents == '3':
+                if jump == 0:
+                    jump_count_start = -10
+                    jump = 1
+                    rating_func()
         f.truncate(0)
         f.close()
 
@@ -359,19 +365,13 @@ def game():
 
                 # Jump when SPACE is pressed
                 if event.key == pygame.K_SPACE:
-
+                    if player_x > crate_x - 200:
                     # Jump only happens when the player is on the ground and not stumbling
-                    if player_y == 325:
-                        if fall_count == 0:
-                            jump = 1
-                            sprite_counter = 0
+                        if player_y == 325:
+                            if fall_count == 0:
+                                jump = 1
+                                sprite_counter = 0
 
-                            # Jump rating based on marker
-                            if crate_x - 120 < player_x > crate_x - 80:
-                                rating = "Perfect!"
-                            elif crate_x - 160 < player_x > crate_x - 120:
-                                rating = "Nice!"
-                            else:
-                                rating = ""
+                                rating_func()
 
 menu()
