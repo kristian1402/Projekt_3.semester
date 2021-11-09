@@ -211,6 +211,7 @@ def game():
 
         # If a jump is happening
         if jump == 1:
+
                 player_y += jump_count
                 jump_count += jump_diff_add
 
@@ -321,6 +322,15 @@ def game():
         contents = f.read()
         if contents == '1':
             if jump == 0:
+                jump_count_start = -15
+                jump = 1
+        if contents == '2':
+            if jump == 0:
+                jump_count_start = -12
+                jump = 1
+        if contents == '3':
+            if jump == 0:
+                jump_count_start = -10
                 jump = 1
         f.truncate(0)
         f.close()

@@ -20,6 +20,9 @@ delay = 0
 # Jump counter
 jumpNumber = 0
 
+# Jump type
+jumpType = 0
+
 # Jump Check
 jumpCheck = False
 
@@ -77,16 +80,40 @@ while (True):
             # Avoids out-of-bounds errors in the beginning
             if(len(cList) == 5):
 
-                # If the current frame is 120 pixels above the frame 5 frames previously...
-                if(cList[0] - 120 > cList[4]):
+                # If the current frame is 120 pixels above the frame 10 frames previously...
+                if(cList[0] - 150 > cList[4]):
+                    jumpType = 1
 
                     # Perform jump action, and set the delay
                     with open('jumpfile.txt', 'w') as f:
-                        f.writelines("1")
+                        f.writelines(str(jumpType))
                     f.close
                     print(f"Jump #{jumpNumber}")
                     jumpNumber += 1
                     delay = 5
+
+                elif(cList[0] - 120 > cList[4]):
+                    jumpType = 2
+
+                    # Perform jump action, and set the delay
+                    with open('jumpfile.txt', 'w') as f:
+                        f.writelines(str(jumpType))
+                    f.close
+                    print(f"Jump #{jumpNumber}")
+                    jumpNumber += 1
+                    delay = 5
+
+                elif (cList[0] - 75 > cList[4]):
+                    jumpType = 3
+
+                    # Perform jump action, and set the delay
+                    with open('jumpfile.txt', 'w') as f:
+                        f.writelines(str(jumpType))
+                    f.close
+                    print(f"Jump #{jumpNumber}")
+                    jumpNumber += 1
+                    delay = 5
+
 
                     # Send jump action to server
 
