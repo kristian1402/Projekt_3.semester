@@ -105,7 +105,7 @@ while (True):
                     delay = 5
                     print(cList[4] - cList[0])
 
-                elif (cList[0] - 75 > cList[4]):
+                elif (cList[0] - 75 > cList[4] and cList[4] - cList[0] > 50 ):
                     jumpType = 3
 
                     # Perform jump action, and set the delay
