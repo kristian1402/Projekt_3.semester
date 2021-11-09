@@ -80,7 +80,7 @@ while (True):
             # Avoids out-of-bounds errors in the beginning
             if(len(cList) == 5):
 
-                # If the current frame is 120 pixels above the frame 10 frames previously...
+                # If the current frame is 150 pixels above the frame 10 frames previously...
                 if(cList[0] - 150 > cList[4]):
                     jumpType = 1
 
@@ -105,7 +105,7 @@ while (True):
                     delay = 5
                     print(cList[4] - cList[0])
 
-                elif (cList[0] - 75 > cList[4] and cList[4] - cList[0] > 50 ):
+                elif (cList[0] - 75 > cList[4] and cList[0] - cList[4] > 50 ):
                     jumpType = 3
 
                     # Perform jump action, and set the delay
