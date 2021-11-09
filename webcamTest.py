@@ -91,6 +91,7 @@ while (True):
                     print(f"Jump #{jumpNumber}")
                     jumpNumber += 1
                     delay = 5
+                    print(cList[4] - cList[0])
 
                 elif(cList[0] - 120 > cList[4]):
                     jumpType = 2
@@ -102,6 +103,7 @@ while (True):
                     print(f"Jump #{jumpNumber}")
                     jumpNumber += 1
                     delay = 5
+                    print(cList[4] - cList[0])
 
                 elif (cList[0] - 75 > cList[4]):
                     jumpType = 3
@@ -113,6 +115,7 @@ while (True):
                     print(f"Jump #{jumpNumber}")
                     jumpNumber += 1
                     delay = 5
+                    print(cList[4] - cList[0])
 
 
                     # Send jump action to server
