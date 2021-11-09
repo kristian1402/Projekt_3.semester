@@ -3,10 +3,6 @@ import pygame, glob, random, socket, sys
 # Initialize everything imported (otherwise things such as the font does not work)
 pygame.init()
 
-# Start by clearing the txt file (just in case)
-file = open("jumpfile.txt","w")
-file.close()
-
 # Varibles to keep track of the time
 clock = pygame.time.Clock()
 passed_time = 0
@@ -22,6 +18,10 @@ high_score = 0
 
 # Menu Function
 def menu():
+
+    # Start by clearing the txt file (just in case)
+    file = open("jumpfile.txt", "w")
+    file.close()
 
     # Load the menu image and stretch it to the window size
     image = pygame.image.load("assets\menu.png")
@@ -85,7 +85,8 @@ def game():
     fall_sprites = [pygame.image.load(img) for img in glob.glob("assets\Fall\\*.png")]
     player = run_sprites[sprite_counter]
 
-    # Keep track of the player's y-value
+    # Keep track of the player's x and y-value
+    player_x = 107
     player_y = 325
 
     # Keeps track of if the player is currently jumping
@@ -101,6 +102,9 @@ def game():
 
     # Decreases the time of the jump
     jump_diff_add = 0.5
+
+    # Jump rating
+    rating = ""
 
     # Keeps track of if the player is currently falling
     fall = 0
@@ -210,6 +214,10 @@ def game():
                 player_y += jump_count
                 jump_count += jump_diff_add
 
+                #Print the rating
+                jumptext = font.render(str(rating), 1, (0, 0, 0))
+                screen.blit(jumptext, (120, 150))
+
                 # If the player, for some reason, goes under the ground, put them back
                 if player_y >= 325:
                     player_y = 325
@@ -232,7 +240,15 @@ def game():
 
         # Display crate
         crate_rect = screen.blit(crate,(crate_x,360))
-        #pygame.draw.rect(screen, (0, 0, 255), (crate_rect), 1)
+
+        # Draw the markers before each crate
+        red_mark = (crate_x - 160, 417, 160, 10)
+        yellow_mark = (crate_x - 130, 417, 40, 10)
+        green_mark = (crate_x - 90, 417, 40, 10)
+        pygame.draw.rect(screen, (255, 0, 0), (red_mark), 0)
+        pygame.draw.rect(screen, (255, 255, 0), (yellow_mark), 0)
+        pygame.draw.rect(screen, (0, 255, 0), (green_mark), 0)
+
 
         # Make the crate move
         crate_x -= crate_speed
@@ -305,7 +321,6 @@ def game():
         contents = f.read()
         if contents == '1':
             if jump == 0:
-                print("Jump Detected!")
                 jump = 1
         f.truncate(0)
         f.close()
@@ -339,4 +354,13 @@ def game():
                         if fall_count == 0:
                             jump = 1
                             sprite_counter = 0
+
+                            # Jump rating based on marker
+                            if crate_x - 120 < player_x > crate_x - 80:
+                                rating = "Perfect!"
+                            elif crate_x - 160 < player_x > crate_x - 120:
+                                rating = "Nice!"
+                            else:
+                                rating = ""
+
 menu()
