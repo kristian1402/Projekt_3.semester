@@ -19,10 +19,6 @@ high_score = 0
 # Menu Function
 def menu():
 
-    # Start by clearing the txt file (just in case)
-    file = open("jumpfile.txt", "w")
-    file.close()
-
     # Load the menu image and stretch it to the window size
     image = pygame.image.load("assets\menu.png")
     image = pygame.transform.scale(image, (640, 480))
@@ -58,6 +54,11 @@ def menu():
 # Game-screen function
 ## (Lots of necessary code is repeated from menu)
 def game():
+
+    # Start by clearing the txt file (just in case)
+    file = open("jumpfile.txt", "w")
+    file.close()
+
     # Start timer
     global passed_time
     global clock
