@@ -60,6 +60,7 @@ def rating_func():
         rating = "Nice!"
     else:
         rating = ""
+    print("RATING: " + rating)
 # Game-screen function
 ## (Lots of necessary code is repeated from menu)
 
@@ -355,18 +356,18 @@ def game():
         timertext = font.render("Time: " + str(passed_time / 1000), 1, (0, 0, 0))
         screen.blit(timertext, (20, 20))
 
+        #  Auto-Jump
+        if jump_block:
+           if crate_x - 80 <= player_x <= crate_x - 55:
+                jump = 1
+                rating_func()
+
         # Draw jump ratings
         if fall_count == 0:
             jumptext = font.render(str(ratingdisplay), 1, (0, 0, 0))
             screen.blit(jumptext, (80, 270))
         else:
             timer = 0
-
-        #  Auto-Jump
-        if jump_block:
-           if crate_x - 72 <= player_x:
-                jump = 1
-                rating_func()
 
         # Fall on collision with crate
         if player_hitbox.colliderect(crate_rect):
