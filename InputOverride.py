@@ -15,6 +15,7 @@ font = pygame.font.SysFont("impact", 20)
 bigfont = pygame.font.SysFont("impact", 30)
 
 high_score = 0
+jump_success = False
 
 # Menu Function
 def menu():
@@ -50,17 +51,30 @@ def menu():
                     # Run the game
                     game()
 
-def rating_func(): #THIS ALL NEED CALIBRATION
+def rating_func():
     global rating
     # Jump rating based on marker
-    if crate_x - 95 < player_x < crate_x - 60:
+    if crate_x - 85 < player_x < crate_x - 50:
         rating = "Perfect!"
-    elif crate_x - 135 < player_x < crate_x - 95:
+    elif crate_x - 175 < player_x < crate_x - 85:
         rating = "Nice!"
     else:
         rating = ""
 # Game-screen function
 ## (Lots of necessary code is repeated from menu)
+
+def show_rating():
+    global jump_occured
+    global rating
+    global ratingdisplay
+    global timer
+    if jump_occured:
+        jump_occured = False
+
+        timer = 70
+        if timer > 0:
+            ratingdisplay = rating
+
 def game():
 
     # VARIABLES SPECIFIC TO THIS PAM
@@ -120,9 +134,18 @@ def game():
     # Decreases the time of the jump
     jump_diff_add = 0.5
 
+    # Jump occured
+    global jump_occured
+    jump_occured = False
+
     # Jump rating
     global rating
+    global ratingdisplay
+    global timer
+    ratingdisplay = ""
     rating = ""
+    display_rating = False
+    timer = 0
 
     # Keeps track of if the player is currently falling
     fall = 0
@@ -242,22 +265,20 @@ def game():
 
         # If a jump is happening
         if jump == 1:
+            jump_occured = True
+            player_y += jump_count
+            jump_count += jump_diff_add
 
-                player_y += jump_count
-                jump_count += jump_diff_add
-
-                # Print the rating
-                jumptext = font.render(str(rating), 1, (0, 0, 0))
-                screen.blit(jumptext, (120, 150))
-
-                # If the player, for some reason, goes under the ground, put them back
-                if player_y >= 325:
-                    player_y = 325
-                    jump = 0
+            # If the player, for some reason, goes under the ground, put them back
+            if player_y >= 325:
+                player_y = 325
+                jump = 0
         else:
             jump_count = jump_count_start
+            show_rating()
 
         if fall == 1:
+            jump_occured = False
             current_speed = scroll_speed
             fall = 0
             if fall_count == 0:
@@ -274,8 +295,8 @@ def game():
         crate_rect = screen.blit(crate,(crate_x,360))
 
         # Draw the markers before each crate
-        red_mark = (crate_x - 200, 417, 200, 10)
-        yellow_mark = (crate_x - 130, 417, 40, 10)
+        red_mark = (crate_x - 300, 417, 300, 10)
+        yellow_mark = (crate_x - 180, 417, 90, 10)
         green_mark = (crate_x - 90, 417, 35, 10)
         pygame.draw.rect(screen, (255, 0, 0), (red_mark), 0)
         pygame.draw.rect(screen, (255, 255, 0), (yellow_mark), 0)
@@ -334,6 +355,13 @@ def game():
         timertext = font.render("Time: " + str(passed_time / 1000), 1, (0, 0, 0))
         screen.blit(timertext, (20, 20))
 
+        # Draw jump ratings
+        if fall_count == 0:
+            jumptext = font.render(str(ratingdisplay), 1, (0, 0, 0))
+            screen.blit(jumptext, (80, 270))
+        else:
+            timer = 0
+
         #  Auto-Jump
         if jump_block:
            if crate_x - 72 <= player_x:
@@ -348,7 +376,7 @@ def game():
 
         f = open('jumpfile.txt', 'r+')
         contents = f.read()
-        if jump_block == False and player_x > crate_x - 200:
+        if jump_block == False and player_x > crate_x - 300:
             if contents == '1':
                 if jump == 0:
                     jump_count_start = -15
@@ -374,6 +402,12 @@ def game():
         passed_time = pygame.time.get_ticks() - start_time
         clock.tick(60)
 
+        # Rating timer
+        if timer > 0:
+            timer -= 1
+        else:
+            ratingdisplay = ""
+
         # Update display
         pygame.display.update()
 
@@ -390,7 +424,7 @@ def game():
 
                 # Jump when SPACE is pressed
                 if event.key == pygame.K_SPACE:
-                    if jump_block == False and player_x > crate_x - 200:
+                    if jump_block == False and player_x > crate_x - 300:
                     # Jump only happens when the player is on the ground and not stumbling
                         if player_y == 325:
                             if fall_count == 0:
