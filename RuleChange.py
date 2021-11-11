@@ -60,9 +60,6 @@ def rating_func():
         rating = "Nice!"
     else:
         rating = ""
-    print("RATING: " + rating)
-# Game-screen function
-## (Lots of necessary code is repeated from menu)
 
 def show_rating():
     global jump_occured
@@ -80,15 +77,14 @@ def show_rating():
         timer = 70
         if timer > 0:
             ratingdisplay = rating
-
+# Game-screen function
+## (Lots of necessary code is repeated from menu)
 def game():
 
-    # VARIABLES SPECIFIC TO THIS PAM
-
-    # Define crate that must be automatically jumped over
-    crate_list = random.sample(range(19), 10)
-    crate_list = [x + 1 for x in crate_list]
-    print(crate_list)
+    # PAM SPECIFIC VARIABLES
+    slow_down = False
+    slow_down_clock = False
+    normal_crate_speed = 5
 
     # Start by clearing the txt file (just in case)
     file = open("jumpfile.txt", "w")
@@ -165,7 +161,6 @@ def game():
 
     # Score
     global score
-    global high_score
     score = 0
 
     # Difficulty increase
@@ -202,13 +197,6 @@ def game():
     # While the game is running...
     while True:
 
-        if any(item == crate_counter for item in crate_list):
-            jump_count_start = -12
-            jump_block = True
-        else:
-            jump_block = False
-
-
         # Draw 3 instances of the background image (allows scrolling)
         ## One to the left of the screen, one to the right, and one in the middle
         ### 640 is the length of the game screen
@@ -218,7 +206,6 @@ def game():
 
         # Move background 1 pixel
         bg_x -= scroll_speed
-
 
         # Reset the background when the background has moved the length of the screen
         if bg_x <= -640:
@@ -268,6 +255,7 @@ def game():
 
         # If a jump is happening
         if jump == 1:
+            slow_down = False
             jump_occured = True
             player_y += jump_count
             jump_count += jump_diff_add
@@ -281,7 +269,6 @@ def game():
             show_rating()
 
         if fall == 1:
-            jump_occured = False
             current_speed = scroll_speed
             fall = 0
             if fall_count == 0:
@@ -362,12 +349,6 @@ def game():
         scoretext = font.render("Score: " + str(score), 1, (0, 0, 0))
         screen.blit(scoretext, (20, 40))
 
-        #  Auto-Jump
-        if jump_block:
-           if crate_x - 80 <= player_x <= crate_x - 55:
-                jump = 1
-                rating_func()
-
         # Draw jump ratings
         if fall_count == 0:
             jumptext = font.render(str(ratingdisplay), 1, (0, 0, 0))
@@ -383,7 +364,7 @@ def game():
 
         f = open('jumpfile.txt', 'r+')
         contents = f.read()
-        if jump_block == False and player_x > crate_x - 300:
+        if player_x > crate_x - 300:
             if contents == '1':
                 if jump == 0:
                     jump_count_start = -15
@@ -402,11 +383,33 @@ def game():
         f.truncate(0)
         f.close()
 
+        if player_x > crate_x - 300 and player_x < crate_x:
+            if jump == 0:
+                slow_down = True
+        else:
+            normal_crate_speed = crate_speed
+            slow_down = False
+
+
+        if slow_down:
+            scroll_speed = 0.4
+            crate_speed = normal_crate_speed / 2
+            sprite_delay_amount = sprite_delay_amount * 3
+        else:
+            scroll_speed = 1
+            crate_speed = normal_crate_speed
+
+
         if player_rect.colliderect(goal_rect):
             return
 
         # Keep track of time
-        passed_time = pygame.time.get_ticks() - start_time
+        if slow_down:
+            slow_down_clock = not slow_down_clock
+            if slow_down_clock == True:
+                passed_time = pygame.time.get_ticks() - start_time
+        else:
+            passed_time = pygame.time.get_ticks() - start_time
         clock.tick(60)
 
         # Rating timer
@@ -431,13 +434,12 @@ def game():
 
                 # Jump when SPACE is pressed
                 if event.key == pygame.K_SPACE:
-                    if jump_block == False and player_x > crate_x - 300:
+                    if player_x > crate_x - 300:
                     # Jump only happens when the player is on the ground and not stumbling
                         if player_y == 325:
                             if fall_count == 0:
                                 jump = 1
                                 sprite_counter = 0
-
                                 rating_func()
 
 menu()

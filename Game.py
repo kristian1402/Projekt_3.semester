@@ -1,4 +1,4 @@
-import pygame, glob, random, socket, sys
+import pygame, glob, random
 
 # Initialize everything imported (otherwise things such as the font does not work)
 pygame.init()
