@@ -66,9 +66,14 @@ def show_rating():
     global rating
     global ratingdisplay
     global timer
+    global score
+    global fall_count
     if jump_occured:
         jump_occured = False
-
+        if rating == "Perfect!" and fall_count == 0:
+            score += 100
+        if rating == "Nice!" and fall_count == 0:
+            score += 50
         timer = 70
         if timer > 0:
             ratingdisplay = rating
@@ -140,6 +145,7 @@ def game():
     timer = 0
 
     # Keeps track of if the player is currently falling
+    global fall_count
     fall = 0
     fall_count = 0
 
@@ -150,7 +156,6 @@ def game():
 
     # Score
     global score
-    global high_score
     score = 0
 
     # Difficulty increase
@@ -333,6 +338,10 @@ def game():
         # Draw timer text in the corner at all times
         timertext = font.render("Time: " + str(passed_time / 1000), 1, (0, 0, 0))
         screen.blit(timertext, (20, 20))
+
+        # Draw score
+        scoretext = font.render("Score: " + str(score), 1, (0, 0, 0))
+        screen.blit(scoretext, (20, 40))
 
         # Draw jump ratings
         if fall_count == 0:
