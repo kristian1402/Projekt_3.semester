@@ -113,7 +113,6 @@ def game():
     run_sprites = [pygame.image.load(img) for img in glob.glob("assets\Run\\*.png")]
     jump_sprites = [pygame.image.load(img) for img in glob.glob("assets\Jump\\*.png")]
     fall_sprites = [pygame.image.load(img) for img in glob.glob("assets\Fall\\*.png")]
-    hurt_sprites = [pygame.image.load(img) for img in glob.glob("assets\Hurt\\*.png")]
     player = run_sprites[sprite_counter]
 
     # Keep track of the player's x and y-value
@@ -216,7 +215,7 @@ def game():
         # Update the player sprite
         if sprite_delay >= sprite_delay_amount:
             if sprite_counter == 7:
-                if jump != 1 and fall_count == 0 or fall_immune:
+                if jump != 1 and fall_count == 0:
                     sprite_counter = 0
             else:
                 sprite_counter += 1
@@ -234,9 +233,6 @@ def game():
         if fall_count > 0:
             player = fall_sprites[sprite_counter]
             sprite_delay_amount = 5
-        if fall_immune:
-            player = hurt_sprites[sprite_counter]
-            sprite_delay_amount = 7
 
 
         # Draw the player, scale the player down, blit it on the screen
@@ -357,6 +353,11 @@ def game():
             screen.blit(jumptext, (80, 270))
         else:
             timer = 0
+
+        # Draw dodges
+        if fall_immune:
+            immunetext = font.render("Dodged!", 1, (0, 0, 0))
+            screen.blit(immunetext, (80, 250))
 
         # Fall on collision with crate
         if player_hitbox.colliderect(crate_rect):
