@@ -5,6 +5,7 @@ def GameFile():
 
     # Regular game = "Game"
     # Input Override = "InputOverride"
+    # Rule Change = "RuleChange
     import Game
 
 def webcamTestFile():
