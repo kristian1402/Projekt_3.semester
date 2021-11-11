@@ -1,10 +1,14 @@
 from multiprocessing import Process
 
 def GameFile():
+    # Write the name of the file you want to play here
+
+    # Regular game = "Game"
+    # Input Override = "InputOverride"
     import Game
 
 def webcamTestFile():
-    import webcamTest
+    import CameraInput
 
 def main():
 

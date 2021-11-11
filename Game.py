@@ -54,7 +54,7 @@ def menu():
 def rating_func():
     global rating
     # Jump rating based on marker
-    if crate_x - 85 < player_x < crate_x - 50:
+    if crate_x - 85 < player_x:
         rating = "Perfect!"
     elif crate_x - 175 < player_x < crate_x - 85:
         rating = "Nice!"
@@ -276,7 +276,7 @@ def game():
         # Draw the markers before each crate
         red_mark = (crate_x - 300, 417, 300, 10)
         yellow_mark = (crate_x - 180, 417, 90, 10)
-        green_mark = (crate_x - 90, 417, 35, 10)
+        green_mark = (crate_x - 90, 417, 90, 10)
         pygame.draw.rect(screen, (255, 0, 0), (red_mark), 0)
         pygame.draw.rect(screen, (255, 255, 0), (yellow_mark), 0)
         pygame.draw.rect(screen, (0, 255, 0), (green_mark), 0)
