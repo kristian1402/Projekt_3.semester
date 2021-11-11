@@ -208,10 +208,6 @@ def game():
         else:
             jump_block = False
 
-        # Check for the last auto-jump animation bug
-        if crate_counter == 19 and jump != 1:
-            sprite_counter = 0
-
 
         # Draw 3 instances of the background image (allows scrolling)
         ## One to the left of the screen, one to the right, and one in the middle
