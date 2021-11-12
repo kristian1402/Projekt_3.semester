@@ -15,17 +15,10 @@ cY = 0
 cList = []
 
 # How many variables do we store in the list at a time?
-listamount = 5
-
-# Jump check counter
-jump_check = -1
-
-# Store base value for jump
-base = 0
+listamount = 4
 
 # Delay counter
 delay = 0
-delay_amount = 30
 
 # Jump counter
 jumpNumber = 0
@@ -90,29 +83,43 @@ while (True):
             # Avoids out-of-bounds errors in the beginning
             if(len(cList) == listamount):
 
-                # A jump is detected when the hand has moved at least 50 pixels
-                if(cList[0] - 50 > cList[listamount - 1]):
-                    base = cList[0]
-                    print("Base: " + str(base))
-                    delay = delay_amount
-                    jump_check = 8
+                # If the current frame is 150 pixels above the frame 10 frames previously...
+                if(cList[0] - 100 > cList[listamount - 1]):
+                    jumpType = 1
+
+                    # Perform jump action, and set the delay
+                    with open('jumpfile.txt', 'w') as f:
+                        f.writelines(str(jumpType))
+                    f.close
+                    print(f"Jump #{jumpNumber}")
+                    jumpNumber += 1
+                    delay = 5
+
+                elif(cList[0] - 80 > cList[listamount - 1]):
+                    jumpType = 2
+
+                    # Perform jump action, and set the delay
+                    with open('jumpfile.txt', 'w') as f:
+                        f.writelines(str(jumpType))
+                    f.close
+                    print(f"Jump #{jumpNumber}")
+                    jumpNumber += 1
+                    delay = 5
+
+                elif (cList[0] - 50 > cList[listamount - 1]):
+                    jumpType = 3
+
+                    # Perform jump action, and set the delay
+                    with open('jumpfile.txt', 'w') as f:
+                        f.writelines(str(jumpType))
+                    f.close
+                    print(f"Jump #{jumpNumber}")
+                    jumpNumber += 1
+                    delay = 5
 
         else:
             # The delay makes it so the program waits 5 frames before accepting more input
             delay -= 1
-
-        if jump_check == 0:
-            print("Peak of jump:" + str(min(cList)))
-            if(base - min(cList) > 180):
-                print("HIGH JUMP")
-            elif (base - min(cList) > 80):
-                print("MID JUMP")
-            elif (base - min(cList) > 5):
-                print("LOW JUMP")
-            jump_check = -1
-        elif jump_check > 0:
-            print("Calculating jump...")
-            jump_check -= 1
 
     # Show image
     cv2.imshow("contours", frame_flip)

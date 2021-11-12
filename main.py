@@ -7,7 +7,7 @@ def GameFile():
     # Input Override (50% Auto-Jump) = "InputOverride"
     # Rule Change (Slow Down) = "RuleChange"
     # Mitigated Failure (50% No Falling) = "MitigatedFailure
-    import MitigatedFailure
+    import Game
 
 def webcamTestFile():
     import CameraInput
