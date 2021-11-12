@@ -105,10 +105,28 @@ while (True):
             print("Peak of jump:" + str(min(cList)))
             if(base - min(cList) > 180):
                 print("HIGH JUMP")
+                jumpType = 1
+
+                # Perform jump action, and set the delay
+                with open('jumpfile.txt', 'w') as f:
+                    f.writelines(str(jumpType))
+                f.close
             elif (base - min(cList) > 80):
                 print("MID JUMP")
+                jumpType = 2
+
+                # Perform jump action, and set the delay
+                with open('jumpfile.txt', 'w') as f:
+                    f.writelines(str(jumpType))
+                f.close
             elif (base - min(cList) > 5):
                 print("LOW JUMP")
+                jumpType = 3
+
+                # Perform jump action, and set the delay
+                with open('jumpfile.txt', 'w') as f:
+                    f.writelines(str(jumpType))
+                f.close
             jump_check = -1
         elif jump_check > 0:
             print("Calculating jump...")
