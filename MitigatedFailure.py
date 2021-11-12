@@ -54,7 +54,9 @@ def menu():
 def rating_func():
     global rating
     # Jump rating based on marker
-    if crate_x - 85 < player_x:
+    if no_points:
+        rating = ""
+    elif crate_x - 85 < player_x:
         rating = "Perfect!"
     elif crate_x - 175 < player_x < crate_x - 85:
         rating = "Nice!"
@@ -70,10 +72,13 @@ def show_rating():
     global fall_count
     if jump_occured:
         jump_occured = False
-        if rating == "Perfect!" and fall_count == 0:
-            score += 100
-        if rating == "Nice!" and fall_count == 0:
-            score += 50
+        if no_points == False:
+            if rating == "Perfect!" and fall_count == 0:
+                score += 100
+            if rating == "Nice!" and fall_count == 0:
+                score += 50
+        else:
+            rating = ""
         timer = 70
         if timer > 0:
             ratingdisplay = rating
@@ -82,7 +87,9 @@ def show_rating():
 def game():
 
     #VARIABLES FOR THIS PAM ONLY
+    global no_points
     fall_immune = False
+    no_points = False
 
     # Start by clearing the txt file (just in case)
     file = open("jumpfile.txt", "w")
@@ -264,6 +271,7 @@ def game():
         else:
             jump_count = jump_count_start
             show_rating()
+            no_points = False
 
         if fall == 1:
             current_speed = scroll_speed
@@ -368,6 +376,7 @@ def game():
                         fall = 1
                     else:
                         print("No fall!")
+                        no_points = True
                         fall_immune = True
 
         f = open('jumpfile.txt', 'r+')
@@ -390,6 +399,8 @@ def game():
                     rating_func()
         f.truncate(0)
         f.close()
+
+        print(no_points)
 
         if player_rect.colliderect(goal_rect):
             return
