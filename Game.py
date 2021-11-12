@@ -80,12 +80,10 @@ def show_rating():
                 score += 50
 
             # Scores for jump height
-            if jump_count_start == -15:
-                score += 25
-            if jump_count_start == -12:
-                score += 50
             if jump_count_start == -10:
                 score += 100
+            if jump_count_start == -12:
+                score += 50
         timer = 70
         if timer > 0:
             ratingdisplay = rating
