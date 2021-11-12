@@ -14,6 +14,9 @@ cY = 0
 # Stores the last 5 center coordinates
 cList = []
 
+# How many variables do we store in the list at a time?
+listamount = 4
+
 # Delay counter
 delay = 0
 
@@ -72,16 +75,16 @@ while (True):
         cList.append(cY)
 
         # The last 5 frame's y-coordinates are put into a list, any older are popped out
-        if (len(cList) > 5):
+        if (len(cList) > listamount):
             cList.pop(0)
         # The delay variable ensures that the same gesture doesn't get recognized multiple times
         if (delay == 0):
 
             # Avoids out-of-bounds errors in the beginning
-            if(len(cList) == 5):
+            if(len(cList) == listamount):
 
                 # If the current frame is 150 pixels above the frame 10 frames previously...
-                if(cList[0] - 150 > cList[4]):
+                if(cList[0] - 100 > cList[listamount - 1]):
                     jumpType = 1
 
                     # Perform jump action, and set the delay
@@ -91,9 +94,10 @@ while (True):
                     print(f"Jump #{jumpNumber}")
                     jumpNumber += 1
                     delay = 5
-                    print(cList[4] - cList[0])
+                    print(cList[listamount - 1] - cList[0])
+                    print("High Jump")
 
-                elif(cList[0] - 120 > cList[4]):
+                elif(cList[0] - 80 > cList[listamount - 1]):
                     jumpType = 2
 
                     # Perform jump action, and set the delay
@@ -103,9 +107,10 @@ while (True):
                     print(f"Jump #{jumpNumber}")
                     jumpNumber += 1
                     delay = 5
-                    print(cList[4] - cList[0])
+                    print(cList[listamount - 1] - cList[0])
+                    print("Medium Jump")
 
-                elif (cList[0] - 75 > cList[4] and cList[0] - cList[4] > 50 ):
+                elif (cList[0] - 50 > cList[listamount - 1]):
                     jumpType = 3
 
                     # Perform jump action, and set the delay
@@ -115,7 +120,8 @@ while (True):
                     print(f"Jump #{jumpNumber}")
                     jumpNumber += 1
                     delay = 5
-                    print(cList[4] - cList[0])
+                    print(cList[listamount - 1] - cList[0])
+                    print("Small Jump!")
 
 
                     # Send jump action to server
