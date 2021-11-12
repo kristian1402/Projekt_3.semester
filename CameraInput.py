@@ -95,7 +95,7 @@ while (True):
                     base = cList[0]
                     print("Base: " + str(base))
                     delay = delay_amount
-                    jump_check = 8
+                    jump_check = 5
 
         else:
             # The delay makes it so the program waits 5 frames before accepting more input

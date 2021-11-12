@@ -70,10 +70,22 @@ def show_rating():
     global fall_count
     if jump_occured:
         jump_occured = False
-        if rating == "Perfect!" and fall_count == 0:
-            score += 100
-        if rating == "Nice!" and fall_count == 0:
-            score += 50
+
+        if fall_count == 0:
+
+            # Scores for jump marker
+            if rating == "Perfect!":
+                score += 100
+            if rating == "Nice!":
+                score += 50
+
+            # Scores for jump height
+            if jump_count_start == -15:
+                score += 25
+            if jump_count_start == -12:
+                score += 50
+            if jump_count_start == -10:
+                score += 100
         timer = 70
         if timer > 0:
             ratingdisplay = rating
@@ -122,6 +134,7 @@ def game():
     jump = 0
 
     # Keeps track of the player's jump, and when to return to the ground
+    global jump_count_start
     jump_count = 0
     jump_count_start = -12
 
@@ -362,16 +375,19 @@ def game():
             if contents == '1':
                 if jump == 0:
                     jump_count_start = -15
+                    jump_count = jump_count_start
                     jump = 1
                     rating_func()
             if contents == '2':
                 if jump == 0:
                     jump_count_start = -12
+                    jump_count = jump_count_start
                     jump = 1
                     rating_func()
             if contents == '3':
                 if jump == 0:
                     jump_count_start = -10
+                    jump_count = jump_count_start
                     jump = 1
                     rating_func()
         f.truncate(0)
@@ -410,6 +426,28 @@ def game():
                     # Jump only happens when the player is on the ground and not stumbling
                         if player_y == 325:
                             if fall_count == 0:
+                                jump_count_start = -15
+                                jump_count = jump_count_start
+                                jump = 1
+                                sprite_counter = 0
+                                rating_func()
+                if event.key == pygame.K_c:
+                    if player_x > crate_x - 300:
+                    # Jump only happens when the player is on the ground and not stumbling
+                        if player_y == 325:
+                            if fall_count == 0:
+                                jump_count_start = -12
+                                jump_count = jump_count_start
+                                jump = 1
+                                sprite_counter = 0
+                                rating_func()
+                if event.key == pygame.K_v:
+                    if player_x > crate_x - 300:
+                    # Jump only happens when the player is on the ground and not stumbling
+                        if player_y == 325:
+                            if fall_count == 0:
+                                jump_count_start = -10
+                                jump_count = jump_count_start
                                 jump = 1
                                 sprite_counter = 0
                                 rating_func()
