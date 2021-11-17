@@ -183,8 +183,6 @@ def game():
     global crate_x
     crate_x = 1500
     crate_speed = 5
-    crate_speed_low = 5
-    crate_speed_high = 7
     crate_spawn_low = 1000
     crate_spawn_high = 1100
 
@@ -200,8 +198,20 @@ def game():
     # Move house
     house_bgx = 900
 
+    # Define the urn-probabilities
+    fail_list = [3, 7, 12, 15, 19]
+
+    # Auto Fail
+    auto_fail = False
+
     # While the game is running...
     while True:
+
+        # Override failed inputs
+        if any(item == crate_counter for item in fail_list):
+            auto_fail = True
+        else:
+            auto_fail = False
 
         # Draw 3 instances of the background image (allows scrolling)
         ## One to the left of the screen, one to the right, and one in the middle
@@ -317,8 +327,6 @@ def game():
 
                 # As the game progresses, the crates move faster and spawn further apart
                     current_speed += 1
-                    crate_speed_low += 1
-                    crate_speed_high += 1
                     crate_spawn_low += 50
                     crate_spawn_high += 150
                     difficulty_increase = False
@@ -327,7 +335,6 @@ def game():
                 crate_x = random.randint(crate_spawn_low, crate_spawn_high)
                 if fall_count > 0:
                     crate_x += 500
-                crate_speed = random.randint(crate_speed_low, crate_speed_high)
 
             else:
                 house_rect = screen.blit(house, (house_bgx, 240))
@@ -369,7 +376,7 @@ def game():
 
         f = open('jumpfile.txt', 'r+')
         contents = f.read()
-        if player_x > crate_x - 300:
+        if auto_fail == False and player_x > crate_x - 300:
             if contents == '1':
                 if jump == 0:
                     jump_count_start = -15
@@ -423,7 +430,7 @@ def game():
                     if player_x > crate_x - 300:
                     # Jump only happens when the player is on the ground and not stumbling
                         if player_y == 325:
-                            if fall_count == 0:
+                            if auto_fail == False and fall_count == 0:
                                 jump_count_start = -15
                                 jump_count = jump_count_start
                                 jump = 1
@@ -433,7 +440,7 @@ def game():
                     if player_x > crate_x - 300:
                     # Jump only happens when the player is on the ground and not stumbling
                         if player_y == 325:
-                            if fall_count == 0:
+                            if auto_fail == False and fall_count == 0:
                                 jump_count_start = -12
                                 jump_count = jump_count_start
                                 jump = 1
@@ -443,7 +450,7 @@ def game():
                     if player_x > crate_x - 300:
                     # Jump only happens when the player is on the ground and not stumbling
                         if player_y == 325:
-                            if fall_count == 0:
+                            if auto_fail == False and fall_count == 0:
                                 jump_count_start = -10
                                 jump_count = jump_count_start
                                 jump = 1
